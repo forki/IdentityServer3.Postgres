@@ -26,6 +26,11 @@ Target "Build" (fun _ ->
     outputFiles |> ignore
 )
 
-"Clean" ==> "Build"
+Target "Test" (fun _ ->
+    !!(outputDir @@ "*.Tests.dll")
+    |> FixieHelper.Fixie id
+)
+
+"Clean" ==> "Build" ==> "Test"
 
 RunTargetOrDefault "Build"
