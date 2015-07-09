@@ -31,15 +31,8 @@
 
         public NpgsqlConsentStore(NpgsqlConnection conn, string schema)
         {
-            if (conn == null)
-            {
-                throw new ArgumentNullException(nameof(conn));
-            }
-
-            if (string.IsNullOrWhiteSpace(schema))
-            {
-                throw new ArgumentException("schema is null or whitespace", nameof(schema));
-            }
+            Preconditions.IsNotNull(conn, nameof(conn));
+            Preconditions.IsShortString(schema, nameof(schema));
 
             _conn = conn;
             _schema = schema;
@@ -69,6 +62,8 @@
 
         public Task<IEnumerable<Consent>> LoadAllAsync(string subject)
         {
+            Preconditions.IsShortString(subject, nameof(subject));
+
             return _conn.ExecuteCommand(_loadAllQuery, async cmd =>
                 {
                     cmd.Parameters.AddWithValue("subject", subject);
@@ -94,6 +89,9 @@
 
         public Task RevokeAsync(string subject, string client)
         {
+            Preconditions.IsShortString(subject, nameof(subject));
+            Preconditions.IsShortString(client, nameof(client));
+
             return _conn.ExecuteCommand(_revokeQuery, async cmd =>
                 {
                     cmd.Parameters.AddWithValue("subject", subject);
@@ -107,6 +105,9 @@
 
         public Task<Consent> LoadAsync(string subject, string client)
         {
+            Preconditions.IsShortString(subject, nameof(subject));
+            Preconditions.IsShortString(client, nameof(client));
+
             return _conn.ExecuteCommand(_loadQuery, async cmd =>
                 {
                     cmd.Parameters.AddWithValue("@subject", subject);
@@ -134,6 +135,8 @@
 
         public async Task UpdateAsync(Consent consent)
         {
+            Preconditions.IsNotNull(consent, nameof(consent));
+
             var consentExistsTask = ConsentExistsInTable(consent);
             var row = ConsentRow.Convert(consent);
 
@@ -209,6 +212,8 @@
 
             public static ConsentRow Read(IDataReader reader)
             {
+                Preconditions.IsNotNull(reader, nameof(reader));
+
                 int subjectOrdinal = reader.GetOrdinal("subject");
                 int clientIdOrdinal = reader.GetOrdinal("client_id");
                 int scopesOrdinal = reader.GetOrdinal("scopes");
@@ -223,6 +228,8 @@
 
             public static ConsentRow Convert(Consent consent)
             {
+                Preconditions.IsNotNull(consent, nameof(consent));
+
                 return new ConsentRow
                 {
                     ClientId = consent.ClientId,
