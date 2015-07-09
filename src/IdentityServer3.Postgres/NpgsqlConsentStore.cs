@@ -14,12 +14,14 @@
     public class NpgsqlConsentStore : IConsentStore
     {
         private readonly NpgsqlConnection _conn;
-        private readonly string _insertQuery;
+        private readonly string _schema;
+       
+        // Queries
         private readonly string _loadAllQuery;
         private readonly string _loadQuery;
         private readonly string _revokeQuery;
         private readonly string _rowExistsQuery;
-        private readonly string _schema;
+        private readonly string _insertQuery;
         private readonly string _updateQuery;
 
         public NpgsqlConsentStore(NpgsqlConnection conn)
@@ -67,7 +69,7 @@
 
         public Task<IEnumerable<Consent>> LoadAllAsync(string subject)
         {
-            return ExecuteCommand(_loadAllQuery, async cmd =>
+            return _conn.ExecuteCommand(_loadAllQuery, async cmd =>
                 {
                     cmd.Parameters.AddWithValue("subject", subject);
 
@@ -86,13 +88,13 @@
                         }
                     }
 
-                    return (IEnumerable<Consent>) consentList;
+                    return (IEnumerable<Consent>)consentList;
                 });
         }
 
         public Task RevokeAsync(string subject, string client)
         {
-            return ExecuteCommand(_revokeQuery, async cmd =>
+            return _conn.ExecuteCommand(_revokeQuery, async cmd =>
                 {
                     cmd.Parameters.AddWithValue("subject", subject);
                     cmd.Parameters.AddWithValue("client", client);
@@ -105,7 +107,7 @@
 
         public Task<Consent> LoadAsync(string subject, string client)
         {
-            return ExecuteCommand(_loadQuery, async cmd =>
+            return _conn.ExecuteCommand(_loadQuery, async cmd =>
                 {
                     cmd.Parameters.AddWithValue("@subject", subject);
                     cmd.Parameters.AddWithValue("@client", client);
@@ -138,7 +140,7 @@
             if (await consentExistsTask)
             {
                 // Update
-                await ExecuteCommand(_updateQuery, async cmd =>
+                await _conn.ExecuteCommand(_updateQuery, async cmd =>
                     {
                         cmd.Parameters.AddWithValue("subject", row.Subject);
                         cmd.Parameters.AddWithValue("client", row.ClientId);
@@ -152,7 +154,7 @@
             else
             {
                 // Insert
-                await ExecuteCommand(_insertQuery, async cmd =>
+                await _conn.ExecuteCommand(_insertQuery, async cmd =>
                     {
                         cmd.Parameters.AddWithValue("subject", row.Subject);
                         cmd.Parameters.AddWithValue("client", row.ClientId);
@@ -174,7 +176,7 @@
                            "CONSTRAINT pk_consents_subject_client PRIMARY KEY(subject, client_id)" +
                            ") WITH (OIDS = FALSE); ";
 
-            ExecuteCommand(query,
+            _conn.ExecuteCommand(query,
                 cmd =>
                 {
                     cmd.ExecuteNonQuery();
@@ -186,104 +188,78 @@
 
         private Task<bool> ConsentExistsInTable(Consent consent)
         {
-            return ExecuteCommand(_rowExistsQuery, async cmd =>
+            return _conn.ExecuteCommand(_rowExistsQuery, async cmd =>
                 {
                     cmd.Parameters.AddWithValue("subject", consent.Subject);
                     cmd.Parameters.AddWithValue("client", consent.ClientId);
 
-                    var rowCount = (long) await cmd.ExecuteScalarAsync();
+                    var rowCount = (long)await cmd.ExecuteScalarAsync();
 
                     return rowCount > 0;
                 });
         }
 
-        private async Task<T> ExecuteCommand<T>(string commandText,
-                                                Func<NpgsqlCommand, Task<T>> func)
+        private class ConsentRow
         {
-            T result;
+            public string Subject { get; set; }
 
-            if (_conn.State != ConnectionState.Open)
+            public string ClientId { get; set; }
+
+            public string ScopesAsString { get; set; }
+
+            public static ConsentRow Read(IDataReader reader)
             {
-                await _conn.OpenAsync();
+                int subjectOrdinal = reader.GetOrdinal("subject");
+                int clientIdOrdinal = reader.GetOrdinal("client_id");
+                int scopesOrdinal = reader.GetOrdinal("scopes");
+
+                return new ConsentRow
+                {
+                    Subject = reader.GetString(subjectOrdinal),
+                    ClientId = reader.GetString(clientIdOrdinal),
+                    ScopesAsString = reader.GetString(scopesOrdinal)
+                };
             }
 
-            using (var tx = _conn.BeginTransaction())
+            public static ConsentRow Convert(Consent consent)
             {
-                using (var cmd = _conn.CreateCommand())
+                return new ConsentRow
                 {
-                    cmd.Transaction = tx;
-                    cmd.CommandText = commandText;
+                    ClientId = consent.ClientId,
+                    Subject = consent.Subject,
+                    ScopesAsString = SerializeScopes(consent.Scopes)
+                };
+            }
 
-                    result = await func(cmd);
+            private static string SerializeScopes(IEnumerable<string> scopes)
+            {
+                if (scopes == null || !scopes.Any())
+                {
+                    return string.Empty;
                 }
 
-                tx.Commit();
+                return scopes.Aggregate((s1, s2) => $"{s1},{s2}");
             }
 
-            return result;
-        }
-    }
-
-    internal class ConsentRow
-    {
-        public string Subject { get; set; }
-
-        public string ClientId { get; set; }
-
-        public string ScopesAsString { get; set; }
-
-        public static ConsentRow Read(IDataReader reader)
-        {
-            int subjectOrdinal = reader.GetOrdinal("subject");
-            int clientIdOrdinal = reader.GetOrdinal("client_id");
-            int scopesOrdinal = reader.GetOrdinal("scopes");
-
-            return new ConsentRow
+            private static IEnumerable<string> DeserializeScopes(string scopes)
             {
-                Subject = reader.GetString(subjectOrdinal),
-                ClientId = reader.GetString(clientIdOrdinal),
-                ScopesAsString = reader.GetString(scopesOrdinal)
-            };
-        }
+                if (scopes == null)
+                {
+                    return new string[0];
+                }
 
-        public static ConsentRow Convert(Consent consent)
-        {
-            return new ConsentRow
-            {
-                ClientId = consent.ClientId,
-                Subject = consent.Subject,
-                ScopesAsString = SerializeScopes(consent.Scopes)
-            };
-        }
-
-        private static string SerializeScopes(IEnumerable<string> scopes)
-        {
-            if (scopes == null || !scopes.Any())
-            {
-                return string.Empty;
+                return scopes.Split(',');
             }
 
-            return scopes.Aggregate((s1, s2) => $"{s1},{s2}");
-        }
-
-        private static IEnumerable<string> DeserializeScopes(string scopes)
-        {
-            if (scopes == null)
+            public Consent ToConsent()
             {
-                return new string[0];
+                return new Consent
+                {
+                    ClientId = ClientId,
+                    Subject = Subject,
+                    Scopes = DeserializeScopes(ScopesAsString)
+                };
             }
-
-            return scopes.Split(',');
-        }
-
-        public Consent ToConsent()
-        {
-            return new Consent
-            {
-                ClientId = ClientId,
-                Subject = Subject,
-                Scopes = DeserializeScopes(ScopesAsString)
-            };
         }
     }
 }

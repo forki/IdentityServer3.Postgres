@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="NpgsqlConsentStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransactionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
