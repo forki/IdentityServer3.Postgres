@@ -81,6 +81,7 @@
     <Compile Include="Fixie\StructureMapCustomization.cs" />
     <Compile Include="Fixie\StructureMapFixture.cs" />
     <Compile Include="Fixie\NestedClassPerMethodConvention.cs" />
+    <Compile Include="NpgsqlClientStoreTests.cs" />
     <Compile Include="NpgsqlConsentStoreTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
