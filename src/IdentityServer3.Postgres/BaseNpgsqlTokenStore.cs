@@ -195,6 +195,11 @@
 WITH (
   OIDS=FALSE
 )
+
+CREATE INDEX ix_tokens_subject_client_tokentype
+  ON {_schema}.tokens
+  USING btree
+  (subject COLLATE pg_catalog."default", client COLLATE pg_catalog."default", token_type);
             */
         }
 
