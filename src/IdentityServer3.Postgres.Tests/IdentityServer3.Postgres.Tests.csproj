@@ -83,6 +83,7 @@
     <Compile Include="Fixie\NestedClassPerMethodConvention.cs" />
     <Compile Include="NpgsqlClientStoreTests.cs" />
     <Compile Include="NpgsqlConsentStoreTests.cs" />
+    <Compile Include="NpgsqlScopeStoreTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

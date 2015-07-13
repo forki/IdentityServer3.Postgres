@@ -56,8 +56,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseNpgsqlTokenStore.cs" />
+    <Compile Include="Converters\ClaimConverter.cs" />
+    <Compile Include="Converters\ClaimsPrincipalConverter.cs" />
+    <Compile Include="Converters\ClientConverter.cs" />
+    <Compile Include="Converters\Models\ClaimModel.cs" />
+    <Compile Include="Converters\Models\ClaimsPrincipalModel.cs" />
+    <Compile Include="Converters\Models\ClientModel.cs" />
+    <Compile Include="Converters\Models\ScopeModel.cs" />
+    <Compile Include="Converters\ScopeConverter.cs" />
+    <Compile Include="JsonSerializerFactory.cs" />
     <Compile Include="NpgsqlClientStore.cs" />
     <Compile Include="NpgsqlConsentStore.cs" />
+    <Compile Include="NpgsqlRefreshTokenStore.cs" />
+    <Compile Include="NpgsqlAuthorizationCodeStore.cs" />
+    <Compile Include="NpgsqlScopeStore.cs" />
+    <Compile Include="NpgsqlTokenHandleStore.cs" />
     <Compile Include="Preconditions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransactionHelper.cs" />

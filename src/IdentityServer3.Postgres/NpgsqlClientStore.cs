@@ -6,6 +6,8 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
 
+    using IdentityServer3.Postgres.Converters;
+
     using Newtonsoft.Json;
 
     using Npgsql;
@@ -16,6 +18,7 @@
     public class NpgsqlClientStore : IClientStore
     {
         private readonly NpgsqlConnection _conn;
+        private readonly JsonSerializer _serializer;
         private readonly string _schema;
 
         private readonly string _findQuery;
@@ -33,6 +36,8 @@
 
             _conn = conn;
             _schema = schema;
+            _serializer = JsonSerializerFactory.Create();
+            _serializer.Converters.Add(new ClaimConverter());
 
             _findQuery = "SELECT client_id, model " +
                          $"FROM {_schema}.clients " +
@@ -54,7 +59,7 @@
                     {
                         if (await reader.ReadAsync())
                         {
-                            var row = ClientRow.FromReader(reader);
+                            var row = ClientRow.FromReader(reader, _serializer);
 
                             return row.ToClient();
                         }
@@ -76,7 +81,7 @@
                 {
                     var row = ClientRow.FromClient(client);
                     cmd.Parameters.AddWithValue("client", row.ClientId);
-                    cmd.Parameters.AddWithValue("model", JsonConvert.SerializeObject(row.Model));
+                    cmd.Parameters.AddWithValue("model", _serializer.Serialize(row.Model));
 
                     await cmd.ExecuteNonQueryAsync();
 
@@ -107,13 +112,14 @@
 
             public ClientModel Model { get; set; }
 
-            public static ClientRow FromReader(DbDataReader reader)
+            public static ClientRow FromReader(DbDataReader reader, JsonSerializer serializer)
             {
                 int idOrdinal = reader.GetOrdinal("client_id");
                 int modelOrdinal = reader.GetOrdinal("model");
 
                 var serializedModel = reader.GetString(modelOrdinal);
-                var model = JsonConvert.DeserializeObject<ClientModel>(serializedModel);
+
+                var model = serializer.Deserialize<ClientModel>(serializedModel);
 
                 var row = new ClientRow
                 {
@@ -144,29 +150,6 @@
                 return client;
             }
 
-            internal class ClaimModel
-            {
-                public string Type { get; set; }
-
-                public string Value { get; set; }
-
-                public static ClaimModel FromClaim(Claim claim)
-                {
-                    var model = new ClaimModel
-                    {
-                        Type = claim.Type,
-                        Value = claim.Value
-                    };
-
-                    return model;
-                }
-
-                public Claim ToClaim()
-                {
-                    return new Claim(this.Type, this.Value);
-                }
-            }
-
             internal class ClientModel
             {
                 public static ClientModel FromClient(Client client)
@@ -182,7 +165,7 @@
                         AllowRememberConsent = client.AllowRememberConsent,
                         Flow = client.Flow,
                         AllowClientCredentialsOnly = client.AllowClientCredentialsOnly,
-                        Claims = client.Claims.Select(ClaimModel.FromClaim).ToList(),
+                        Claims = client.Claims,
                         AccessTokenType = client.AccessTokenType,
                         AbsoluteRefreshTokenLifetime = client.AbsoluteRefreshTokenLifetime,
                         AccessTokenLifetime = client.AccessTokenLifetime,
@@ -220,7 +203,7 @@
                         ClientId = null,
                         ClientSecrets = this.ClientSecrets,
                         Flow = this.Flow,
-                        Claims = this.Claims.Select(x => x.ToClaim()).ToList(),
+                        Claims = this.Claims,
                         AccessTokenType = this.AccessTokenType,
                         ClientUri = this.ClientUri,
                         ClientName = this.ClientName,
@@ -423,7 +406,7 @@
                 /// The claims.
                 /// 
                 /// </value>
-                public List<ClaimModel> Claims { get; set; }
+                public List<Claim> Claims { get; set; }
 
                 /// <summary>
                 /// Gets or sets a value indicating whether client claims should be always included in the access tokens - or only for client credentials flow.
