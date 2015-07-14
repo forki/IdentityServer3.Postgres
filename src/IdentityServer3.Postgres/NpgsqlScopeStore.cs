@@ -5,6 +5,8 @@ namespace IdentityServer3.Postgres
     using System.Data.Common;
     using System.Threading.Tasks;
 
+    using IdentityServer3.Postgres.Converters;
+
     using Newtonsoft.Json;
 
     using Npgsql;
@@ -17,6 +19,8 @@ namespace IdentityServer3.Postgres
     public class NpgsqlScopeStore : IScopeStore, IDisposable
     {
         private readonly NpgsqlConnection _conn;
+        private readonly JsonSerializer _serializer;
+
         private readonly string _schema;
 
         private readonly string _findQuery;
@@ -32,6 +36,9 @@ namespace IdentityServer3.Postgres
         {
             Preconditions.IsNotNull(conn, nameof(conn));
             Preconditions.IsShortString(schema, nameof(schema));
+
+            _serializer = JsonSerializerFactory.Create();
+            _serializer.Converters.Add(new ClaimConverter());
 
             _conn = conn;
             _schema = schema;
@@ -91,8 +98,7 @@ namespace IdentityServer3.Postgres
             return _conn.ExecuteCommand(query,
                 async cmd =>
                 {
-                    var row = ScopeRow.FromScope(scope);
-                    var serialized = JsonConvert.SerializeObject(row.Model);
+                    var serialized = _serializer.Serialize(scope);
 
                     cmd.Parameters.AddWithValue("name", scope.Name);
                     cmd.Parameters.AddWithValue("public", scope.ShowInDiscoveryDocument);
@@ -130,107 +136,22 @@ namespace IdentityServer3.Postgres
 
             while (await hasMoreRows)
             {
-                var row = ScopeRow.FromReader(reader);
+                int scopeOrdinal = reader.GetOrdinal("model");
+                string model = reader.GetString(scopeOrdinal);
 
                 hasMoreRows = reader.ReadAsync();
 
-                var scope = row.ToScope();
+                var scope = _serializer.Deserialize<Scope>(model);
+
                 resultList.Add(scope);
             }
 
             return resultList;
         }
 
-        internal class ScopeRow
-        {
-            public string Name { get; set; }
-
-            public bool ShowInDiscoveryDocument { get; set; }
-
-            public ScopeModel Model { get; set; }
-
-            public static ScopeRow FromScope(Scope scope)
-            {
-                return new ScopeRow()
-                {
-                    Name = scope.Name,
-                    ShowInDiscoveryDocument = scope.ShowInDiscoveryDocument,
-                    Model = new ScopeModel
-                    {
-                        Enabled = scope.Enabled,
-                        Name = scope.Name,
-                        DisplayName = scope.DisplayName,
-                        Description = scope.Description,
-                        Required = scope.Required,
-                        Emphasize = scope.Emphasize,
-                        Type = scope.Type,
-                        Claims = scope.Claims,
-                        IncludeAllClaimsForUser = scope.IncludeAllClaimsForUser,
-                        ClaimsRule = scope.ClaimsRule
-                    }
-                };
-            }
-
-            public static ScopeRow FromReader(DbDataReader reader)
-            {
-                int nameOrdinal = reader.GetOrdinal("name");
-                int isPublicOrdinal = reader.GetOrdinal("is_public");
-                int modelOrdinal = reader.GetOrdinal("model");
-
-                var row = new ScopeRow
-                {
-                    Name = reader.GetString(nameOrdinal),
-                    ShowInDiscoveryDocument = reader.GetBoolean(isPublicOrdinal),
-                    Model = JsonConvert.DeserializeObject<ScopeModel>(reader.GetString(modelOrdinal))
-                };
-
-                return row;
-            }
-
-            public Scope ToScope()
-            {
-                return new Scope
-                {
-                    Enabled = this.Model.Enabled,
-                    Name = this.Model.Name,
-                    DisplayName = this.Model.DisplayName,
-                    Description = this.Model.Description,
-                    Required = this.Model.Required,
-                    Emphasize = this.Model.Emphasize,
-                    Type = this.Model.Type,
-                    Claims = this.Model.Claims,
-                    IncludeAllClaimsForUser = this.Model.IncludeAllClaimsForUser,
-                    ClaimsRule = this.Model.ClaimsRule
-                };
-            }
-
-            internal class ScopeModel
-            {
-                public bool Enabled { get; set; }
-
-                public string Name { get; set; }
-
-                public string DisplayName { get; set; }
-
-                public string Description { get; set; }
-
-                public bool Required { get; set; }
-
-                public bool Emphasize { get; set; }
-
-                public ScopeType Type { get; set; }
-
-                public List<ScopeClaim> Claims { get; set; }
-
-                public bool IncludeAllClaimsForUser { get; set; }
-
-                public string ClaimsRule { get; set; }
-            }
-        }
-
         public void Dispose()
         {
-            ((IDisposable) _conn).Dispose();
+            ((IDisposable)_conn).Dispose();
         }
     }
 }
