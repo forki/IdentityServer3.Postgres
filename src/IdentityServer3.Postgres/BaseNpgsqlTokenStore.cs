@@ -184,30 +184,6 @@
                 });
         }
 
-        public void InitializeTable()
-        {
-            /*
-            CREATE TABLE {_schema}.tokens
-(
-  key text NOT NULL,
-  token_type smallint NOT NULL,
-  subject character varying(255) NOT NULL,
-  client character varying(255) NOT NULL,
-  expiry timestamp with time zone NOT NULL,
-  model jsonb NOT NULL,
-  CONSTRAINT pk_tokens_key_tokentype PRIMARY KEY (token_type, key)
-)
-WITH (
-  OIDS=FALSE
-)
-
-CREATE INDEX ix_tokens_subject_client_tokentype
-  ON {_schema}.tokens
-  USING btree
-  (subject COLLATE pg_catalog."default", client COLLATE pg_catalog."default", token_type);
-            */
-        }
-
         public enum TokenType : short
         {
             AuthorizationCode = 1,

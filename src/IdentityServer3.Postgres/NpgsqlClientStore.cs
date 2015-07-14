@@ -85,23 +85,6 @@
                 });
         }
 
-        public void InitializeTable()
-        {
-            string query = $"CREATE TABLE IF NOT EXISTS {_schema}.clients (" +
-                           "client_id character varying(255) NOT NULL," +
-                           "model jsonb NOT NULL," +
-                           "CONSTRAINT pk_clients_clientid PRIMARY KEY(client_id)" +
-                           ") WITH (OIDS = FALSE);";
-
-            _conn.ExecuteCommand(query,
-                async cmd =>
-                {
-                    await cmd.ExecuteNonQueryAsync();
-
-                    return 0;
-                }).GetAwaiter().GetResult();
-        }
-
         public void Dispose()
         {
             ((IDisposable) _conn).Dispose();

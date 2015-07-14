@@ -10,7 +10,8 @@
 
     public class NpgsqlTokenHandleStore : BaseNpgsqlTokenStore<Token>, ITokenHandleStore
     {
-        public NpgsqlTokenHandleStore(NpgsqlConnection conn, NpgsqlSchema schema, IScopeStore scopeStore, IClientStore clientStore)
+        public NpgsqlTokenHandleStore(NpgsqlConnection conn, NpgsqlSchema schema, 
+            IScopeStore scopeStore, IClientStore clientStore)
             : base(conn, schema, TokenType.TokenHandle, scopeStore, clientStore)
         {
         }

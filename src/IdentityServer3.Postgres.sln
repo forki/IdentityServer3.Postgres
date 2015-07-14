@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer3.Postgres", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer3.Postgres.Tests", "IdentityServer3.Postgres.Tests\IdentityServer3.Postgres.Tests.csproj", "{4961B608-B49F-4E40-94D3-E232C4A5A5BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer3.Postgres.DbUp", "IdentityServer3.Postgres.DbUp\IdentityServer3.Postgres.DbUp.csproj", "{1C773633-48FE-459C-B084-02830F00F23B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4961B608-B49F-4E40-94D3-E232C4A5A5BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4961B608-B49F-4E40-94D3-E232C4A5A5BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4961B608-B49F-4E40-94D3-E232C4A5A5BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C773633-48FE-459C-B084-02830F00F23B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C773633-48FE-459C-B084-02830F00F23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C773633-48FE-459C-B084-02830F00F23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C773633-48FE-459C-B084-02830F00F23B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

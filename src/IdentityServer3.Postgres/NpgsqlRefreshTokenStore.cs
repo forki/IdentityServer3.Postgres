@@ -12,12 +12,14 @@
     {
         private readonly string _updateExpiryQuery;
 
-        public NpgsqlRefreshTokenStore(NpgsqlConnection conn, IScopeStore scopeStore, IClientStore clientStore)
+        public NpgsqlRefreshTokenStore(NpgsqlConnection conn, IScopeStore scopeStore, 
+            IClientStore clientStore)
             : this(conn, "public", scopeStore, clientStore)
         {
         }
 
-        public NpgsqlRefreshTokenStore(NpgsqlConnection conn, NpgsqlSchema schema, IScopeStore scopeStore, IClientStore clientStore)
+        public NpgsqlRefreshTokenStore(NpgsqlConnection conn, NpgsqlSchema schema, 
+            IScopeStore scopeStore, IClientStore clientStore)
             : base(conn, schema, TokenType.RefreshToken, scopeStore, clientStore)
         {
             _updateExpiryQuery = $"UPDATE {Schema}.tokens " +

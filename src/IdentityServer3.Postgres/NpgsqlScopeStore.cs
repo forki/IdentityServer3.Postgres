@@ -5,8 +5,6 @@ namespace IdentityServer3.Postgres
     using System.Data.Common;
     using System.Threading.Tasks;
 
-    using IdentityServer3.Postgres.Converters;
-
     using Newtonsoft.Json;
 
     using Npgsql;
@@ -107,24 +105,6 @@ namespace IdentityServer3.Postgres
 
                     return 0;
                 });
-        }
-
-        public void InitializeTable()
-        {
-            string query = $"CREATE TABLE {_schema}.scopes" +
-                           "(" +
-                           "name text NOT NULL," +
-                           "is_public boolean NOT NULL," +
-                           "model jsonb NOT NULL," +
-                           "CONSTRAINT pk_scopes_name PRIMARY KEY(name)" +
-                           ") WITH(OIDS = FALSE)";
-
-            _conn.ExecuteCommand(query,
-                async cmd =>
-                {
-                    await cmd.ExecuteNonQueryAsync();
-                    return 0;
-                }).GetAwaiter().GetResult();
         }
 
         private async Task<IEnumerable<Scope>> ParseReader(DbDataReader reader)

@@ -170,25 +170,6 @@
             }
         }
 
-        public void InitializeTable()
-        {
-            string query = $"CREATE TABLE IF NOT EXISTS {_schema}.consents (" +
-                           "subject character varying(255) NOT NULL," +
-                           "client_id character varying(255) NOT NULL," +
-                           "scopes character varying(2000) NOT NULL," +
-                           "CONSTRAINT pk_consents_subject_client PRIMARY KEY(subject, client_id)" +
-                           ") WITH (OIDS = FALSE); ";
-
-            _conn.ExecuteCommand(query,
-                cmd =>
-                {
-                    cmd.ExecuteNonQuery();
-
-                    return Task.FromResult(true);
-                }).GetAwaiter()
-                  .GetResult();
-        }
-
         private Task<bool> ConsentExistsInTable(Consent consent)
         {
             return _conn.ExecuteCommand(_rowExistsQuery, async cmd =>
