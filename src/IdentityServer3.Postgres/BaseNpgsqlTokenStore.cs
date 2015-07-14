@@ -15,10 +15,12 @@
     using Thinktecture.IdentityServer.Core.Models;
     using Thinktecture.IdentityServer.Core.Services;
 
-    public abstract class BaseNpgsqlTokenStore<T> where T : class
+    public abstract class BaseNpgsqlTokenStore<T> : IDisposable where T : class
     {
         protected readonly NpgsqlConnection Conn;
         protected readonly TokenType StoredTokenType;
+        private readonly IScopeStore _scopeStore;
+        private readonly IClientStore _clientStore;
         private readonly JsonSerializer _serializer;
 
         protected readonly string Schema;
@@ -42,6 +44,10 @@
             _serializer.Converters.Add(new ClaimsPrincipalConverter());
             _serializer.Converters.Add(new ClientConverter(clientStore));
             _serializer.Converters.Add(new ScopeConverter(scopeStore));
+
+            _scopeStore = scopeStore;
+            _clientStore = clientStore;
+
 
             // Queries
             _revokeQuery = $"DELETE FROM {Schema}.tokens " +
@@ -203,7 +209,6 @@ CREATE INDEX ix_tokens_subject_client_tokentype
             */
         }
 
-
         public enum TokenType : short
         {
             AuthorizationCode = 1,
@@ -246,5 +251,31 @@ CREATE INDEX ix_tokens_subject_client_tokentype
             public string Model { get; set; }
 
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Conn?.Dispose();
+                    ((IDisposable)_scopeStore)?.Dispose();
+                    ((IDisposable)_clientStore)?.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+        }
+        #endregion
     }
 }

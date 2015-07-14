@@ -12,7 +12,7 @@
     using Thinktecture.IdentityServer.Core.Models;
     using Thinktecture.IdentityServer.Core.Services;
 
-    public class NpgsqlClientStore : IClientStore
+    public class NpgsqlClientStore : IClientStore, IDisposable
     {
         private readonly NpgsqlConnection _conn;
         private readonly JsonSerializer _serializer;
@@ -102,6 +102,11 @@
 
                     return 0;
                 }).GetAwaiter().GetResult();
+        }
+
+        public void Dispose()
+        {
+            ((IDisposable) _conn).Dispose();
         }
     }
 }

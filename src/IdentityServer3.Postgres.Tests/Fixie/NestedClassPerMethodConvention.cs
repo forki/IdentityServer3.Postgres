@@ -14,7 +14,10 @@
     {
         public NestedClassPerMethodConvention()
         {
+            // x.DeclaringType is not null since x.IsNested
+            // IsNested is actually a check for x.DeclaringType != null.
             Classes
+                // ReSharper disable once PossibleNullReferenceException
                 .Where(x => x.IsNested && x.DeclaringType.Name.EndsWith("Tests"))
                 .Where(t => t.GetConstructors().All(ci => ci.GetParameters().Length == 0));
 

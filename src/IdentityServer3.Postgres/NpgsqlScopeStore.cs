@@ -1,5 +1,6 @@
 namespace IdentityServer3.Postgres
 {
+    using System;
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace IdentityServer3.Postgres
     using Thinktecture.IdentityServer.Core.Models;
     using Thinktecture.IdentityServer.Core.Services;
 
-    public class NpgsqlScopeStore : IScopeStore
+    public class NpgsqlScopeStore : IScopeStore, IDisposable
     {
         private readonly NpgsqlConnection _conn;
         private readonly string _schema;
@@ -225,6 +226,11 @@ namespace IdentityServer3.Postgres
 
                 public string ClaimsRule { get; set; }
             }
+        }
+
+        public void Dispose()
+        {
+            ((IDisposable) _conn).Dispose();
         }
     }
 }
