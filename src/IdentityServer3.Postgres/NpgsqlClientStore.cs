@@ -26,7 +26,7 @@
         {
         }
 
-        public NpgsqlClientStore(NpgsqlConnection conn, string schema)
+        public NpgsqlClientStore(NpgsqlConnection conn, NpgsqlSchema schema)
         {
             Preconditions.IsNotNull(conn, nameof(conn));
             Preconditions.IsShortString(schema, nameof(schema));
@@ -76,7 +76,6 @@
                 async cmd =>
                 {
                     string model = _serializer.Serialize(client);
-                    Console.WriteLine(model);
                     cmd.Parameters.AddWithValue("client", client.ClientId);
                     cmd.Parameters.AddWithValue("model", model);
 

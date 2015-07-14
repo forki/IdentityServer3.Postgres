@@ -70,6 +70,7 @@
     <Compile Include="NpgsqlConsentStore.cs" />
     <Compile Include="NpgsqlRefreshTokenStore.cs" />
     <Compile Include="NpgsqlAuthorizationCodeStore.cs" />
+    <Compile Include="NpgsqlSchema.cs" />
     <Compile Include="NpgsqlScopeStore.cs" />
     <Compile Include="NpgsqlTokenHandleStore.cs" />
     <Compile Include="Preconditions.cs" />

@@ -1,7 +1,6 @@
 ﻿namespace IdentityServer3.Postgres
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Npgsql;
@@ -19,7 +18,7 @@
 
         }
 
-        public NpgsqlAuthorizationCodeStore(NpgsqlConnection conn, string schema, IScopeStore scopeStore, IClientStore clientStore)
+        public NpgsqlAuthorizationCodeStore(NpgsqlConnection conn, NpgsqlSchema schema, IScopeStore scopeStore, IClientStore clientStore)
             : base(conn, schema, TokenType.AuthorizationCode, scopeStore, clientStore)
         {
         }

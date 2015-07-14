@@ -31,7 +31,7 @@
         private readonly string _removeQuery;
         private readonly string _revokeQuery;
 
-        protected BaseNpgsqlTokenStore(NpgsqlConnection conn, string schema, 
+        protected BaseNpgsqlTokenStore(NpgsqlConnection conn, NpgsqlSchema schema, 
             TokenType storedTokenType, IScopeStore scopeStore, IClientStore clientStore)
         {
             StoredTokenType = storedTokenType;

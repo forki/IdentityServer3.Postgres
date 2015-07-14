@@ -29,7 +29,7 @@
         {
         }
 
-        public NpgsqlConsentStore(NpgsqlConnection conn, string schema)
+        public NpgsqlConsentStore(NpgsqlConnection conn, NpgsqlSchema schema)
         {
             Preconditions.IsNotNull(conn, nameof(conn));
             Preconditions.IsShortString(schema, nameof(schema));

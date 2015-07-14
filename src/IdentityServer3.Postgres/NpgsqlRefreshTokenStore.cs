@@ -17,7 +17,7 @@
         {
         }
 
-        public NpgsqlRefreshTokenStore(NpgsqlConnection conn, string schema, IScopeStore scopeStore, IClientStore clientStore)
+        public NpgsqlRefreshTokenStore(NpgsqlConnection conn, NpgsqlSchema schema, IScopeStore scopeStore, IClientStore clientStore)
             : base(conn, schema, TokenType.RefreshToken, scopeStore, clientStore)
         {
             _updateExpiryQuery = $"UPDATE {Schema}.tokens " +

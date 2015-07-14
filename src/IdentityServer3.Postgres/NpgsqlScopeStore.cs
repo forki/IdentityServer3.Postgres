@@ -32,7 +32,7 @@ namespace IdentityServer3.Postgres
 
         }
 
-        public NpgsqlScopeStore(NpgsqlConnection conn, string schema)
+        public NpgsqlScopeStore(NpgsqlConnection conn, NpgsqlSchema schema)
         {
             Preconditions.IsNotNull(conn, nameof(conn));
             Preconditions.IsShortString(schema, nameof(schema));
