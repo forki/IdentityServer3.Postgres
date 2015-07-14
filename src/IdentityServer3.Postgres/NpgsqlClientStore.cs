@@ -34,7 +34,6 @@
             _conn = conn;
             _schema = schema;
             _serializer = JsonSerializerFactory.Create();
-            _serializer.Converters.Add(new ClaimConverter());
 
             _findQuery = "SELECT client_id, model " +
                          $"FROM {_schema}.clients " +

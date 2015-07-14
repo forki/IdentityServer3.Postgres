@@ -2,6 +2,8 @@
 {
     using System.IO;
 
+    using IdentityServer3.Postgres.Converters;
+
     using Newtonsoft.Json;
 
     public static class JsonSerializerFactory
@@ -16,6 +18,8 @@
                 Formatting = Formatting.Indented,
                 TypeNameHandling = TypeNameHandling.Objects,
             };
+
+            serializer.Converters.Add(new ClaimConverter());
 
             return serializer;
         }

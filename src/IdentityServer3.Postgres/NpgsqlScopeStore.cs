@@ -38,7 +38,6 @@ namespace IdentityServer3.Postgres
             Preconditions.IsShortString(schema, nameof(schema));
 
             _serializer = JsonSerializerFactory.Create();
-            _serializer.Converters.Add(new ClaimConverter());
 
             _conn = conn;
             _schema = schema;

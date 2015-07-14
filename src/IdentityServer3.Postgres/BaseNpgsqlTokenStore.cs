@@ -40,7 +40,6 @@
             Schema = schema;
 
             _serializer = JsonSerializerFactory.Create();
-            _serializer.Converters.Add(new ClaimConverter());
             _serializer.Converters.Add(new ClaimsPrincipalConverter());
             _serializer.Converters.Add(new ClientConverter(clientStore));
             _serializer.Converters.Add(new ScopeConverter(scopeStore));
