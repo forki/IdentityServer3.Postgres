@@ -93,7 +93,7 @@
                 async cmd =>
                 {
                     cmd.Parameters.AddWithValue("key", token.Key);
-                    cmd.Parameters.AddWithValue("token_type", StoredTokenType);
+                    cmd.Parameters.AddWithValue("token_type", (short)StoredTokenType);
                     cmd.Parameters.AddWithValue("subject", token.SubjectId);
                     cmd.Parameters.AddWithValue("client", token.ClientId);
                     cmd.Parameters.AddWithValue("expiry", token.Expiry);
@@ -111,7 +111,7 @@
                 async cmd =>
                 {
                     cmd.Parameters.AddWithValue("key", key);
-                    cmd.Parameters.AddWithValue("tokenType", StoredTokenType);
+                    cmd.Parameters.AddWithValue("tokenType", (short)StoredTokenType);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -136,7 +136,7 @@
                 async cmd =>
                 {
                     cmd.Parameters.AddWithValue("subject", subject);
-                    cmd.Parameters.AddWithValue("tokenType", StoredTokenType);
+                    cmd.Parameters.AddWithValue("tokenType", (short)StoredTokenType);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
