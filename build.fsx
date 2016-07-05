@@ -1,6 +1,6 @@
 // Author: Jos van der Til <jos@vandertil.eu>
 
-#r "build/FAKE/tools/FakeLib.dll"
+#r "packages/FAKE/tools/FakeLib.dll"
 
 open Fake
 
@@ -8,11 +8,10 @@ open Fake
 let rootDir = FileUtils.pwd()
 let sourceDir = rootDir @@ "src"
 let buildDir = rootDir @@ "build"
-let outputDir = buildDir @@ "output"
 
 Target "Clean" (fun _ ->
     // Does what it says on the tin.
-    CleanDir outputDir
+    CleanDir buildDir 
 )
 
 Target "Build" (fun _ ->
@@ -27,7 +26,7 @@ Target "Build" (fun _ ->
 )
 
 Target "Test" (fun _ ->
-    !!(outputDir @@ "*.Tests.dll")
+    !!(buildDir @@ "*.Tests.dll")
     |> FixieHelper.Fixie id
 )
 
