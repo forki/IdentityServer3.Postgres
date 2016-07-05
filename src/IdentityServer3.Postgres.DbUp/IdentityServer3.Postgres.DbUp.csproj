@@ -32,18 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DbUp, Version=3.3.4.0, Culture=neutral, PublicKeyToken=4b419c53bdfd4cbf, processorArchitecture=MSIL">
-      <HintPath>..\packages\dbup.3.3.4\lib\net35\DbUp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DbUp.Postgresql, Version=3.3.4.0, Culture=neutral, PublicKeyToken=4b419c53bdfd4cbf, processorArchitecture=MSIL">
-      <HintPath>..\packages\dbup-postgresql.3.3.4\lib\net40\DbUp.Postgresql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="npgsql, Version=3.1.5.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\npgsql.3.1.5\lib\net45\npgsql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -60,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Scripts\0001 - Initial Database.sql" />
@@ -73,4 +61,37 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
+      <ItemGroup>
+        <Reference Include="DbUp">
+          <HintPath>..\..\packages\dbup\lib\net35\DbUp.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
+      <ItemGroup>
+        <Reference Include="DbUp.Postgresql">
+          <HintPath>..\..\packages\dbup-postgresql\lib\net40\DbUp.Postgresql.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
+      <ItemGroup>
+        <Reference Include="npgsql">
+          <HintPath>..\..\packages\Npgsql\lib\net45\npgsql.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>

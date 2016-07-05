@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer3.Postgres.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer3.Postgres.DbUp", "IdentityServer3.Postgres.DbUp\IdentityServer3.Postgres.DbUp.csproj", "{1C773633-48FE-459C-B084-02830F00F23B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{2F37882B-DB65-4CC7-B1DA-4BCC44013D37}"
+	ProjectSection(SolutionItems) = preProject
+		..\build.fsx = ..\build.fsx
+		..\paket.dependencies = ..\paket.dependencies
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

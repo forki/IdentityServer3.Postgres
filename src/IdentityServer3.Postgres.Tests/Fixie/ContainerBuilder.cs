@@ -21,12 +21,12 @@
 
             if (type == null || type.IsPrimitive)
             {
-                return new NoSpecimen(request);
+                return new NoSpecimen();
             }
 
             var service = _container.TryGetInstance(type);
 
-            return service ?? new NoSpecimen(request);
+            return service ?? new NoSpecimen();
         }
     }
 }

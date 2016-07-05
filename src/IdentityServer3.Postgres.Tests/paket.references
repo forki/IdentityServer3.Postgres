@@ -1,0 +1,7 @@
+﻿IdentityServer3
+Newtonsoft.Json
+npgsql
+AutoFixture
+Fixie
+Shouldly
+structuremap

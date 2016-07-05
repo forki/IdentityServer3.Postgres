@@ -1,3 +1,15 @@
+framework: auto-detect
 source https://www.nuget.org/api/v2
 
 nuget FAKE
+nuget IdentityServer3
+nuget Newtonsoft.Json
+nuget npgsql
+
+nuget AutoFixture
+nuget Fixie
+nuget Shouldly
+nuget structuremap
+
+nuget dbup
+nuget dbup-postgresql
