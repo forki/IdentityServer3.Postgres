@@ -5,8 +5,8 @@
 
     using Npgsql;
 
-    using Thinktecture.IdentityServer.Core.Models;
-    using Thinktecture.IdentityServer.Core.Services;
+    using IdentityServer3.Core.Models;
+    using IdentityServer3.Core.Services;
 
     public class NpgsqlTokenHandleStore : BaseNpgsqlTokenStore<Token>, ITokenHandleStore
     {
@@ -16,7 +16,7 @@
         {
         }
 
-        protected override Token ToToken(string key, Thinktecture.IdentityServer.Core.Models.Token value)
+        protected override Token ToToken(string key, IdentityServer3.Core.Models.Token value)
         {
             var token = new Token
             {
@@ -31,7 +31,7 @@
             return token;
         }
 
-        public async Task StoreAsync(string key, Thinktecture.IdentityServer.Core.Models.Token value)
+        public async Task StoreAsync(string key, IdentityServer3.Core.Models.Token value)
         {
             var token = ToToken(key, value);
 

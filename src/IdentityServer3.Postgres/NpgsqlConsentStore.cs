@@ -8,8 +8,8 @@
 
     using Npgsql;
 
-    using Thinktecture.IdentityServer.Core.Models;
-    using Thinktecture.IdentityServer.Core.Services;
+    using IdentityServer3.Core.Models;
+    using IdentityServer3.Core.Services;
 
     public class NpgsqlConsentStore : IConsentStore
     {

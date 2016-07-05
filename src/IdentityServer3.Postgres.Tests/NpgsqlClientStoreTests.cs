@@ -10,7 +10,7 @@
 
     using Shouldly;
 
-    using Thinktecture.IdentityServer.Core.Models;
+    using IdentityServer3.Core.Models;
 
     public class NpgsqlClientStoreTests
     {
@@ -40,14 +40,13 @@
                 var client = new Client
                 {
                     ClientId = clientId,
-                    ClientSecrets = fixture.Create<List<ClientSecret>>(),
+                    ClientSecrets = fixture.Create<List<Secret>>(),
                     Flow = Flows.AuthorizationCode,
                     Claims = new List<Claim> { new Claim(fixture.Create("type"), fixture.Create("value"))},
                     AccessTokenType = AccessTokenType.Jwt,
                     ClientUri = fixture.Create<string>(),
                     ClientName = fixture.Create<string>(),
                     RequireConsent = false,
-                    ScopeRestrictions = fixture.Create<List<string>>(),
                     LogoUri = fixture.Create<string>(),
                     Enabled = true,
                 };

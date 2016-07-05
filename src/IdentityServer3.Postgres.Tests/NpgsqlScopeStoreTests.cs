@@ -5,7 +5,7 @@
 
     using Shouldly;
 
-    using Thinktecture.IdentityServer.Core.Models;
+    using IdentityServer3.Core.Models;
 
     public class NpgsqlScopeStoreTests
     {
